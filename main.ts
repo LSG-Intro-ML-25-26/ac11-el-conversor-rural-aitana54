@@ -1,3 +1,6 @@
+namespace SpriteKind {
+    export const House = SpriteKind.create()
+}
 function initText (text: string, X: number, Y: number) {
     textSprite = textsprite.create(text, 0, 5)
     textSprite.setPosition(X, Y)
@@ -175,7 +178,15 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     )
 })
 function set_up_game () {
-	
+    FadeToWhite(4000)
+    nena = sprites.create(assets.image`nena-front`, SpriteKind.Player)
+    nena.setPosition(6, 4)
+    tiles.setCurrentTilemap(tilemap`truque zone`)
+    scene.cameraFollowSprite(nena)
+    shop = sprites.create(assets.image`shop_house`, SpriteKind.House)
+    shop.setPosition(165, 51)
+    shop.setBounceOnWall(true)
+    color.pauseUntilFadeDone()
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -193,6 +204,7 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     false
     )
 })
+let shop: Sprite = null
 let myMenu: miniMenu.MenuSprite = null
 let nena: Sprite = null
 let textSprite: TextSprite = null
