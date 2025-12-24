@@ -141,6 +141,30 @@ function menu () {
         ................................................................................................................................................................
         `)
     scene.setBackgroundColor(15)
+    myMenu = miniMenu.createMenu(
+    miniMenu.createMenuItem("Jugar"),
+    miniMenu.createMenuItem("Atrás")
+    )
+    myMenu.setMenuStyleProperty(miniMenu.MenuStyleProperty.Width, 100)
+    myMenu.setMenuStyleProperty(miniMenu.MenuStyleProperty.Height, 45)
+    myMenu.x = 80
+    myMenu.y = 60
+    myMenu.setFrame(assets.image`option_menu`)
+    myMenu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Background, 14)
+    myMenu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Background, 5)
+    myMenu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Foreground, 1)
+    myMenu.onButtonPressed(controller.A, function (selection, selectedIndex) {
+        myMenu.close()
+        in_menu = false
+        if (selectedIndex == 0) {
+            FadeToWhite(2000)
+            color.pauseUntilFadeDone()
+            in_menu = true
+            set_up_game()
+        } else {
+            game.reset()
+        }
+    })
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -150,6 +174,9 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     false
     )
 })
+function set_up_game () {
+	
+}
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     nena,
@@ -166,11 +193,13 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     false
     )
 })
+let myMenu: miniMenu.MenuSprite = null
 let nena: Sprite = null
 let textSprite: TextSprite = null
+let in_menu = false
 let in_game = false
 let start_text = true
-let in_menu = false
+in_menu = false
 FadeToWhite(4000)
 scene.setBackgroundImage(img`
     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccceb666666666666666666666666666666666666666666666666666666666666666666666666bdeeeeeeeeeecceeeccb6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666bdbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccc
