@@ -7,12 +7,14 @@ function initText (text: string, X: number, Y: number) {
     textSprite.setOutline(1, 6)
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    animation.runImageAnimation(
-    nena,
-    assets.animation`nena-animation-up`,
-    500,
-    false
-    )
+    if (in_game) {
+        animation.runImageAnimation(
+        nena,
+        assets.animation`nena-animation-up`,
+        100,
+        false
+        )
+    }
 })
 function FadeToWhite (Time: number) {
     color.startFade(color.originalPalette, color.White, Time / 2)
@@ -155,14 +157,14 @@ function menu () {
     myMenu.setFrame(assets.image`option_menu`)
     myMenu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Background, 14)
     myMenu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Background, 5)
-    myMenu.setStyleProperty(miniMenu.StyleKind.Selected, miniMenu.StyleProperty.Foreground, 1)
+    myMenu.setStyleProperty(miniMenu.StyleKind.Default, miniMenu.StyleProperty.Foreground, 1)
     myMenu.onButtonPressed(controller.A, function (selection, selectedIndex) {
         myMenu.close()
         in_menu = false
         if (selectedIndex == 0) {
             FadeToWhite(2000)
             color.pauseUntilFadeDone()
-            in_menu = true
+            in_game = true
             set_up_game()
         } else {
             game.reset()
@@ -177,12 +179,14 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    animation.runImageAnimation(
-    nena,
-    assets.animation`nena-animation-left`,
-    500,
-    false
-    )
+    if (in_game) {
+        animation.runImageAnimation(
+        nena,
+        assets.animation`nena-animation-left`,
+        100,
+        false
+        )
+    }
 })
 function set_up_game () {
     FadeToWhite(4000)
@@ -318,20 +322,24 @@ function set_up_game () {
     color.pauseUntilFadeDone()
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    animation.runImageAnimation(
-    nena,
-    assets.animation`nena-animation-right`,
-    500,
-    false
-    )
+    if (in_game) {
+        animation.runImageAnimation(
+        nena,
+        assets.animation`nena-animation-right`,
+        100,
+        false
+        )
+    }
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    animation.runImageAnimation(
-    nena,
-    assets.animation`nena-animation-down`,
-    500,
-    false
-    )
+    if (in_game) {
+        animation.runImageAnimation(
+        nena,
+        assets.animation`nena-animation-down`,
+        100,
+        false
+        )
+    }
 })
 let shop: Sprite = null
 let myMenu: miniMenu.MenuSprite = null
@@ -340,6 +348,7 @@ let textSprite: TextSprite = null
 let in_menu = false
 let start_text = false
 let in_game = false
+in_game = false
 start_text = true
 in_menu = false
 FadeToWhite(4000)
