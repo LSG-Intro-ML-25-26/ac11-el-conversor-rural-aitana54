@@ -4,14 +4,12 @@ namespace SpriteKind {
     export const Boton = SpriteKind.create()
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (in_game) {
-        animation.runImageAnimation(
-        nena,
-        assets.animation`nena-animation-up`,
-        100,
-        false
-        )
-    }
+    animation.runImageAnimation(
+    nena,
+    assets.animation`nena-animation-up`,
+    100,
+    false
+    )
 })
 function FadeToWhite (Time: number) {
     color.startFade(color.originalPalette, color.White, Time / 2)
@@ -19,31 +17,32 @@ function FadeToWhite (Time: number) {
     color.startFade(color.White, color.originalPalette, Time / 2)
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    let menu_item_activo = 0
-    if (shop.overlapsWith(nena) && !(menu_tienda_abierta && !(menu_item_activo))) {
+    if (shop.overlapsWith(nena) && (!(menu_tienda_abierta) && !(menu_item_activo))) {
         menu_tienda_abierta = true
+        sprites.destroy(nena)
         menu_shop = miniMenu.createMenu(
-        miniMenu.createMenuItem("Gallina = 6 de leña"),
-        miniMenu.createMenuItem("Patatas (1,5Kg) = 2 de leña"),
-        miniMenu.createMenuItem("Cabra = 5 de leña"),
-        miniMenu.createMenuItem("Huevo (12) = 3 de leña"),
-        miniMenu.createMenuItem("Caballo = 12 de leña"),
+        miniMenu.createMenuItem("Gallina = 6 leña"),
+        miniMenu.createMenuItem("Patatas (1,5Kg) = 2 leña"),
+        miniMenu.createMenuItem("Cabra = 5 leña"),
+        miniMenu.createMenuItem("Huevo (12) = 3 leña"),
+        miniMenu.createMenuItem("Caballo = 12 leña"),
         miniMenu.createMenuItem("Salir")
         )
-        menu_shop.setPosition(80, 60)
-        menu_shop.onButtonPressed(controller.B, function (selection, selectedIndex) {
+        menu_shop.setStayInScreen(true)
+        menu_shop.onButtonPressed(controller.A, function (selection, selectedIndex) {
             menu_shop.close()
             if (selectedIndex == 0) {
                 cantidad_gallina += hacer_compra(6)
             } else if (selectedIndex == 1) {
                 cantidad_patatas += hacer_compra(2)
             } else if (selectedIndex == 2) {
-                cantidad_huevos += hacer_compra(5)
+                cantidad_cabras += hacer_compra(5)
             } else if (selectedIndex == 3) {
-                cantidad_cabras += hacer_compra(3)
+                cantidad_huevos += hacer_compra(3)
             } else if (selectedIndex == 4) {
                 cantidad_caballos += hacer_compra(12)
             }
+            personaje(150, 90)
             menu_tienda_abierta = false
         })
     }
@@ -55,18 +54,16 @@ function personaje (x: number, y: number) {
     controller.moveSprite(nena)
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (in_game) {
-        animation.runImageAnimation(
-        nena,
-        assets.animation`nena-animation-left`,
-        100,
-        false
-        )
-    }
+    animation.runImageAnimation(
+    nena,
+    assets.animation`nena-animation-left`,
+    100,
+    false
+    )
 })
 function destruir_arbol () {
     if (roble.overlapsWith(nena)) {
-        if (controller.B.isPressed()) {
+        if (controller.A.isPressed()) {
             sprites.destroyAllSpritesOfKind(SpriteKind.Árbol, effects.disintegrate, 800)
             sprites.destroyAllSpritesOfKind(SpriteKind.Boton)
             info.changeScoreBy(1)
@@ -75,28 +72,46 @@ function destruir_arbol () {
     }
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (in_game) {
-        animation.runImageAnimation(
-        nena,
-        assets.animation`nena-animation-right`,
-        100,
-        false
-        )
-    }
+    animation.runImageAnimation(
+    nena,
+    assets.animation`nena-animation-right`,
+    100,
+    false
+    )
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (in_game) {
-        animation.runImageAnimation(
-        nena,
-        assets.animation`nena-animation-down`,
-        100,
-        false
+    animation.runImageAnimation(
+    nena,
+    assets.animation`nena-animation-down`,
+    100,
+    false
+    )
+})
+controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (!(menu_tienda_abierta && !(menu_item_activo))) {
+        menu_item_activo = true
+        sprites.destroy(nena)
+        x_jugador_actual = nena.x
+        y_jugador_actual = nena.y
+        menu_cantidades = miniMenu.createMenu(
+        miniMenu.createMenuItem(convertToText(cantidad_gallina), assets.image`gallina`),
+        miniMenu.createMenuItem(convertToText(cantidad_patatas), assets.image`patata`),
+        miniMenu.createMenuItem(convertToText(cantidad_cabras), assets.image`cabra`),
+        miniMenu.createMenuItem(convertToText(cantidad_huevos), assets.image`huevo`),
+        miniMenu.createMenuItem(convertToText(cantidad_caballos), assets.image`caballo`),
+        miniMenu.createMenuItem("Salir")
         )
+        scene.cameraFollowSprite(menu_cantidades)
+        menu_cantidades.onButtonPressed(controller.A, function (selection, selectedIndex) {
+            menu_item_activo = false
+            personaje(x_jugador_actual, y_jugador_actual)
+            menu_cantidades.close()
+        })
     }
 })
 function generar_arbol () {
-    x = randint(1, 10) * 30
-    y = randint(1, 10) * 30
+    x = randint(1, 7) * 30
+    y = randint(1, 7) * 30
     roble = sprites.create(assets.image`roble`, SpriteKind.Árbol)
     roble.setPosition(x, y)
     arboles_generados += 1
@@ -115,12 +130,20 @@ let boton_arbol: Sprite = null
 let boton_tienda: Sprite = null
 let y = 0
 let x = 0
+let menu_cantidades: miniMenu.MenuSprite = null
+let y_jugador_actual = 0
+let x_jugador_actual = 0
 let roble: Sprite = null
 let menu_shop: miniMenu.MenuSprite = null
+let menu_item_activo = false
 let menu_tienda_abierta = false
 let nena: Sprite = null
-let in_game = 0
 let shop: Sprite = null
+let cantidad_caballos = 0
+let cantidad_huevos = 0
+let cantidad_cabras = 0
+let cantidad_patatas = 0
+let cantidad_gallina = 0
 scene.setBackgroundImage(img`
     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccceb666666666666666666666666666666666666666666666666666666666666666666666666bdeeeeeeeeeecceeeccb6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666bdbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccc
     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccb666666666666666666666666666666666666666666666666666666666666666666666666bdeeeeeeeeeeeeeeeccb6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666fc6666666666666666666666666666666666666666666bdbbbbbbbbbbbbbbbbbbbbbbbbbbbbbcffbbbbbbbbbccccccccccccccc
@@ -275,11 +298,12 @@ scene.setBackgroundImage(img`
     `)
 FadeToWhite(4000)
 let arboles_generados = 0
-let cantidad_gallina = 0
-let cantidad_patatas = 0
-let cantidad_cabras = 0
-let cantidad_huevos = 0
-let cantidad_caballos = 0
+cantidad_gallina = 0
+cantidad_patatas = 0
+cantidad_cabras = 0
+cantidad_huevos = 0
+cantidad_caballos = 0
+info.setScore(0)
 scene.setBackgroundImage(img`
     ................................................................................................................................................................
     ................................................................................................................................................................
@@ -411,13 +435,13 @@ color.pauseUntilFadeDone()
 game.onUpdate(function () {
     destruir_arbol()
     if (nena.overlapsWith(shop)) {
-        boton_tienda = sprites.create(assets.image`b_boton`, SpriteKind.Boton)
+        boton_tienda = sprites.create(assets.image`a_boton`, SpriteKind.Boton)
         boton_tienda.setPosition(shop.x, shop.y - 10)
         if (controller.A.isPressed()) {
             menu_tienda_abierta = true
         }
     } else if (nena.overlapsWith(roble)) {
-        boton_arbol = sprites.create(assets.image`b_boton`, SpriteKind.Boton)
+        boton_arbol = sprites.create(assets.image`a_boton`, SpriteKind.Boton)
         boton_arbol.setPosition(roble.x, roble.y)
     } else {
         sprites.destroyAllSpritesOfKind(SpriteKind.Boton)
