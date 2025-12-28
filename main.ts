@@ -34,18 +34,18 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         miniMenu.createMenuItem("Salir")
         )
         menu_shop.setPosition(80, 60)
-        menu_shop.onButtonPressed(controller.B, function (selection, selectedIndex) {
+        menu_shop.onButtonPressed(controller.A, function (selection, selectedIndex) {
             menu_shop.close()
             if (selectedIndex == 0) {
-                cantidad_gallina += 1
+                cantidad_gallina += hacer_compra(6)
             } else if (selectedIndex == 1) {
-                cantidad_patatas += 1
+                cantidad_patatas += hacer_compra(2)
             } else if (selectedIndex == 2) {
-                cantidad_huevos += 1
+                cantidad_huevos += hacer_compra(5)
             } else if (selectedIndex == 3) {
-                cantidad_cabras += 1
+                cantidad_cabras += hacer_compra(3)
             } else if (selectedIndex == 4) {
-                cantidad_caballos += 1
+                cantidad_caballos += hacer_compra(12)
             }
             menu_tienda_abierta = false
         })
