@@ -219,6 +219,16 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
         )
     }
 })
+function destruir_arbol () {
+    if (roble.overlapsWith(nena)) {
+        if (controller.A.isPressed()) {
+            sprites.destroyAllSpritesOfKind(SpriteKind.Árbol, effects.disintegrate, 800)
+            sprites.destroyAllSpritesOfKind(SpriteKind.Player)
+            info.changeScoreBy(1)
+            generar_arbol()
+        }
+    }
+}
 function set_up_game () {
     FadeToWhite(4000)
     nena = sprites.create(assets.image`nena-front`, SpriteKind.Player)
@@ -389,9 +399,9 @@ function hacer_compra (num: number) {
     }
     return 0
 }
-let roble: Sprite = null
 let y = 0
 let x = 0
+let roble: Sprite = null
 let myMenu: miniMenu.MenuSprite = null
 let menu_shop: miniMenu.MenuSprite = null
 let menu_tienda_abierta = false
