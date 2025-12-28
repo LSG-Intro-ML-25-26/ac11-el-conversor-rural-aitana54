@@ -21,6 +21,36 @@ function FadeToWhite (Time: number) {
     color.pauseUntilFadeDone()
     color.startFade(color.White, color.originalPalette, Time / 2)
 }
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    let menu_item_activo = 0
+    if (shop.overlapsWith(nena) && !(menu_tienda_abierta && !(menu_item_activo))) {
+        menu_tienda_abierta = true
+        menu_shop = miniMenu.createMenu(
+        miniMenu.createMenuItem("Gallina = 6 de leña"),
+        miniMenu.createMenuItem("Patatas (1,5Kg) = 2 de leña"),
+        miniMenu.createMenuItem("Cabra = 5 de leña"),
+        miniMenu.createMenuItem("Huevo (12) = 3 de leña"),
+        miniMenu.createMenuItem("Caballo = 12 de leña"),
+        miniMenu.createMenuItem("Salir")
+        )
+        menu_shop.setPosition(80, 60)
+        menu_shop.onButtonPressed(controller.B, function (selection, selectedIndex) {
+            menu_shop.close()
+            if (selectedIndex == 0) {
+                cantidad_gallina += 1
+            } else if (selectedIndex == 1) {
+                cantidad_patatas += 1
+            } else if (selectedIndex == 2) {
+                cantidad_huevos += 1
+            } else if (selectedIndex == 3) {
+                cantidad_cabras += 1
+            } else if (selectedIndex == 4) {
+                cantidad_caballos += 1
+            }
+            menu_tienda_abierta = false
+        })
+    }
+})
 function menu () {
     sprites.destroy(textSprite)
     scene.setBackgroundImage(img`
@@ -341,8 +371,10 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
         )
     }
 })
-let shop: Sprite = null
 let myMenu: miniMenu.MenuSprite = null
+let menu_shop: miniMenu.MenuSprite = null
+let menu_tienda_abierta = false
+let shop: Sprite = null
 let nena: Sprite = null
 let textSprite: TextSprite = null
 let in_menu = false
@@ -351,6 +383,11 @@ let in_game = false
 in_game = false
 start_text = true
 in_menu = false
+let cantidad_gallina = 0
+let cantidad_patatas = 0
+let cantidad_cabras = 0
+let cantidad_huevos = 0
+let cantidad_caballos = 0
 FadeToWhite(4000)
 scene.setBackgroundImage(img`
     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccceb666666666666666666666666666666666666666666666666666666666666666666666666bdeeeeeeeeeecceeeccb6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666bdbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccc
