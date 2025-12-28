@@ -1,5 +1,6 @@
 namespace SpriteKind {
     export const House = SpriteKind.create()
+    export const Árbol = SpriteKind.create()
 }
 function initText (text: string, X: number, Y: number) {
     textSprite = textsprite.create(text, 0, 5)
@@ -371,6 +372,13 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
         )
     }
 })
+function generar_arbol () {
+    x = randint(1, 10) * 30
+    y = randint(1, 10) * 30
+    roble = sprites.create(assets.image`roble`, SpriteKind.Árbol)
+    roble.setPosition(x, y)
+    arboles_generados += 1
+}
 function hacer_compra (num: number) {
     if (info.score() >= num) {
         info.changeScoreBy(num * -1)
@@ -381,6 +389,9 @@ function hacer_compra (num: number) {
     }
     return 0
 }
+let roble: Sprite = null
+let y = 0
+let x = 0
 let myMenu: miniMenu.MenuSprite = null
 let menu_shop: miniMenu.MenuSprite = null
 let menu_tienda_abierta = false
@@ -393,6 +404,7 @@ let in_game = false
 in_game = false
 start_text = true
 in_menu = false
+let arboles_generados = 0
 let cantidad_gallina = 0
 let cantidad_patatas = 0
 let cantidad_cabras = 0
