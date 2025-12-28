@@ -371,6 +371,16 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
         )
     }
 })
+function hacer_compra (num: number) {
+    if (info.score() >= num) {
+        info.changeScoreBy(num * -1)
+        game.splash("Compra hecha")
+        return 1
+    } else {
+        game.splash("No tienes suficiente leña")
+    }
+    return 0
+}
 let myMenu: miniMenu.MenuSprite = null
 let menu_shop: miniMenu.MenuSprite = null
 let menu_tienda_abierta = false
