@@ -1243,6 +1243,25 @@ f f 1 1 f f 1 1 1 f f 1 1 1 f f
 ...............fceeec...............
 ...............ffceec...............
 `;
+            case "image12":
+            case "b_boton":return img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . f f f f f f f f f f . . . 
+. . f 1 a a a a a a a a 1 f . . 
+. f 1 a a a a a a a a a a 1 f . 
+f 1 a a a a a a a a a a a a 1 f 
+f a a a a a f f f a a a a a a f 
+f a a a a a f a f a a a a a a f 
+f a a a a a f a f a a a a a a f 
+f a a a a a f f f f a a a a a f 
+f a a a a a f a a f a a a a a f 
+f 1 1 a a a f f f f a a a 1 1 f 
+. f 1 1 a a a a a a a a 1 1 f . 
+. . f 1 1 1 1 1 1 1 1 1 1 f . . 
+. . . f f f f f f f f f f . . . 
+`;
         }
         return null;
     })

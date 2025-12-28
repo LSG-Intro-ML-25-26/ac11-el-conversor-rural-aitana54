@@ -1,6 +1,8 @@
 @namespace
 class SpriteKind:
     House = SpriteKind.create()
+    Árbol = SpriteKind.create()
+    Boton = SpriteKind.create()
 def initText(text: str, X: number, Y: number):
     global textSprite
     textSprite = textsprite.create(text, 0, 5)
@@ -8,18 +10,51 @@ def initText(text: str, X: number, Y: number):
     textSprite.set_outline(1, 6)
 
 def on_up_pressed():
-    animation.run_image_animation(nena,
-        assets.animation("""
-            nena-animation-up
-            """),
-        100,
-        False)
+    if in_game:
+        animation.run_image_animation(nena,
+            assets.animation("""
+                nena-animation-up
+                """),
+            100,
+            False)
 controller.up.on_event(ControllerButtonEvent.PRESSED, on_up_pressed)
 
 def FadeToWhite(Time: number):
     color.start_fade(color.original_palette, color.white, Time / 2)
     color.pause_until_fade_done()
     color.start_fade(color.white, color.original_palette, Time / 2)
+
+def on_b_pressed():
+    global menu_tienda_abierta, menu_shop
+    menu_item_activo = 0
+    if shop.overlaps_with(nena) and not (menu_tienda_abierta and not (menu_item_activo)):
+        menu_tienda_abierta = True
+        menu_shop = miniMenu.create_menu(miniMenu.create_menu_item("Gallina = 6 de leña"),
+            miniMenu.create_menu_item("Patatas (1,5Kg) = 2 de leña"),
+            miniMenu.create_menu_item("Cabra = 5 de leña"),
+            miniMenu.create_menu_item("Huevo (12) = 3 de leña"),
+            miniMenu.create_menu_item("Caballo = 12 de leña"),
+            miniMenu.create_menu_item("Salir"))
+        menu_shop.set_position(80, 60)
+        
+        def on_button_pressed(selection, selectedIndex):
+            global cantidad_gallina, cantidad_patatas, cantidad_huevos, cantidad_cabras, cantidad_caballos, menu_tienda_abierta
+            menu_shop.close()
+            if selectedIndex == 0:
+                cantidad_gallina += hacer_compra(6)
+            elif selectedIndex == 1:
+                cantidad_patatas += hacer_compra(2)
+            elif selectedIndex == 2:
+                cantidad_huevos += hacer_compra(5)
+            elif selectedIndex == 3:
+                cantidad_cabras += hacer_compra(3)
+            elif selectedIndex == 4:
+                cantidad_caballos += hacer_compra(12)
+            menu_tienda_abierta = False
+        menu_shop.on_button_pressed(controller.B, on_button_pressed)
+        
+controller.B.on_event(ControllerButtonEvent.PRESSED, on_b_pressed)
+
 def menu():
     global myMenu
     sprites.destroy(textSprite)
@@ -165,18 +200,18 @@ def menu():
         miniMenu.StyleProperty.FOREGROUND,
         1)
     
-    def on_button_pressed(selection, selectedIndex):
-        global in_menu
+    def on_button_pressed2(selection2, selectedIndex2):
+        global in_menu, in_game
         myMenu.close()
         in_menu = False
-        if selectedIndex == 0:
+        if selectedIndex2 == 0:
             FadeToWhite(2000)
             color.pause_until_fade_done()
-            in_menu = True
+            in_game = True
             set_up_game()
         else:
             game.reset()
-    myMenu.on_button_pressed(controller.A, on_button_pressed)
+    myMenu.on_button_pressed(controller.A, on_button_pressed2)
     
 
 def on_a_pressed():
@@ -188,14 +223,22 @@ def on_a_pressed():
 controller.A.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
 
 def on_left_pressed():
-    animation.run_image_animation(nena,
-        assets.animation("""
-            nena-animation-left
-            """),
-        100,
-        False)
+    if in_game:
+        animation.run_image_animation(nena,
+            assets.animation("""
+                nena-animation-left
+                """),
+            100,
+            False)
 controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
 
+def destruir_arbol():
+    if roble.overlaps_with(nena):
+        if controller.B.is_pressed():
+            sprites.destroy_all_sprites_of_kind(SpriteKind.Árbol, effects.disintegrate, 800)
+            sprites.destroy_all_sprites_of_kind(SpriteKind.Boton)
+            info.change_score_by(1)
+            generar_arbol()
 def set_up_game():
     global nena, shop
     FadeToWhite(4000)
@@ -334,35 +377,69 @@ def set_up_game():
         shop_house
         """), SpriteKind.House)
     shop.set_position(165, 51)
+    generar_arbol()
     color.pause_until_fade_done()
 
 def on_right_pressed():
-    animation.run_image_animation(nena,
-        assets.animation("""
-            nena-animation-right
-            """),
-        100,
-        False)
+    if in_game:
+        animation.run_image_animation(nena,
+            assets.animation("""
+                nena-animation-right
+                """),
+            100,
+            False)
 controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
 
 def on_down_pressed():
-    animation.run_image_animation(nena,
-        assets.animation("""
-            nena-animation-down
-            """),
-        100,
-        False)
+    if in_game:
+        animation.run_image_animation(nena,
+            assets.animation("""
+                nena-animation-down
+                """),
+            100,
+            False)
 controller.down.on_event(ControllerButtonEvent.PRESSED, on_down_pressed)
 
-shop: Sprite = None
+def generar_arbol():
+    global x, y, roble, arboles_generados
+    x = randint(1, 10) * 30
+    y = randint(1, 10) * 30
+    roble = sprites.create(assets.image("""
+        roble
+        """), SpriteKind.Árbol)
+    roble.set_position(x, y)
+    arboles_generados += 1
+def hacer_compra(num: number):
+    if info.score() >= num:
+        info.change_score_by(num * -1)
+        game.splash("Compra hecha")
+        return 1
+    else:
+        game.splash("No tienes suficiente leña")
+    return 0
+boton_arbol: Sprite = None
+boton_tienda: Sprite = None
+y = 0
+x = 0
+roble: Sprite = None
 myMenu: miniMenu.MenuSprite = None
+menu_shop: miniMenu.MenuSprite = None
+menu_tienda_abierta = False
+shop: Sprite = None
 nena: Sprite = None
 textSprite: TextSprite = None
 in_menu = False
 start_text = False
 in_game = False
+in_game = False
 start_text = True
 in_menu = False
+arboles_generados = 0
+cantidad_gallina = 0
+cantidad_patatas = 0
+cantidad_cabras = 0
+cantidad_huevos = 0
+cantidad_caballos = 0
 FadeToWhite(4000)
 scene.set_background_image(img("""
     cccccccccccccccccccccccccccccccccccccccccccccccccccccccccceb666666666666666666666666666666666666666666666666666666666666666666666666bdeeeeeeeeeecceeeccb6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666bdbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccc
@@ -522,3 +599,22 @@ while start_text:
     pause(1000)
     textSprite.set_flag(SpriteFlag.INVISIBLE, True)
     pause(1000)
+
+def on_on_update():
+    global boton_tienda, menu_tienda_abierta, boton_arbol
+    destruir_arbol()
+    if nena.overlaps_with(shop):
+        boton_tienda = sprites.create(assets.image("""
+            b_boton
+            """), SpriteKind.Boton)
+        boton_tienda.set_position(boton_tienda.x, boton_tienda.y - 10)
+        if controller.B.is_pressed():
+            menu_tienda_abierta = True
+    elif nena.overlaps_with(roble):
+        boton_arbol = sprites.create(assets.image("""
+            b_boton
+            """), SpriteKind.Boton)
+        boton_arbol.set_position(roble.x, roble.y)
+    else:
+        sprites.destroy_all_sprites_of_kind(SpriteKind.Boton)
+game.on_update(on_on_update)

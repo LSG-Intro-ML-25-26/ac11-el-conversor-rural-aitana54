@@ -54,6 +54,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "roble"
     },
+    "image12": {
+        "data": "hwQQABAAAAAAAAD///8PAAAA8KGqqvEAAAAfqqqqEQ8A8KGqqqoa8QDwqqqqqqrxAPCqqqqqqvEA8Kr6//+v8QDwqvqqr6/xAPCq+v+vr/EA8Kqqqv+v8QDwqqqqqqrxAPCqqqqqqvEA8KGqqqoa8QAAH6qqqhEPAADwoaqq8QAAAAD///8PAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "b_boton"
+    },
     "anim1": {
         "namespace": "myAnimations",
         "id": "anim1",
